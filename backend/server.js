@@ -43,6 +43,20 @@ app.get("/api/cars", (req, res) => {
     });
 });
 
+// Api to create a car
+const postSql = "INSERT INTO cars (model, year) VALUES(?,?)";
+app.post('/api/cars',
+    (req, res) => {
+        const { model, year } = req.body
+        connection.query(postSql, [model, year], (err, results) => {
+            if (err) {
+                res.status(500).json({ error: err.message })
+                return
+            }
+            res.json({ id: results.insertId, model, year });
+        });
+    })
+
 app.listen(port, () => {
     console.log("Server listening at http://localhost:" + port)
 });
