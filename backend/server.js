@@ -44,11 +44,11 @@ app.get("/api/cars", (req, res) => {
 });
 
 // Api to create a car
-const postSql = "INSERT INTO cars (model, year) VALUES(?,?)";
+const updateQuery = "INSERT INTO cars (model, year) VALUES(?,?)";
 app.post('/api/cars',
     (req, res) => {
         const { model, year } = req.body
-        connection.query(postSql, [model, year], (err, results) => {
+        connection.query(updateQuery, [model, year], (err, results) => {
             if (err) {
                 res.status(500).json({ error: err.message })
                 return
@@ -56,6 +56,17 @@ app.post('/api/cars',
             res.json({ id: results.insertId, model, year });
         });
     })
+
+// Delete a car
+const delQuery = "DELETE FROM cars WHERE id=?"
+app.delete("/api/cars/:id", (req, res) => {
+    const { id } = req.params;
+    connection.query(delQuery, [id], (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: "Car deleted" });
+    });
+});
+
 
 app.listen(port, () => {
     console.log("Server listening at http://localhost:" + port)
