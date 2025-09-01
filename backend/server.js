@@ -57,6 +57,26 @@ app.post('/api/cars',
         });
     })
 
+// Api to edit a car
+const editQuery = "UPDATE cars SET model=? , year=? WHERE id=?";
+app.put('/api/cars/:id',
+    (req, res) => {
+        const { id } = req.params
+        const { model, year } = req.body
+
+        const yearInt = parseInt(year, 10);
+
+        connection.query(editQuery, [model, yearInt, id], (err, results) => {
+            if (err) {
+                return res.status(500).json({ error: err.message })
+            }
+            if (results.affectedRows === 0) {
+                return res.status(404).json({ error: "Car not found" });
+            }
+            res.json({ id, model, year });
+        });
+    })
+
 // Delete a car
 const delQuery = "DELETE FROM cars WHERE id=?"
 app.delete("/api/cars/:id", (req, res) => {
